@@ -10,7 +10,8 @@ at::Tensor nms_cpu_kernel(const at::Tensor& dets,
   AT_ASSERTM(dets.type() == scores.type(), "dets should have the same type as scores");
 
   if (dets.numel() == 0)
-    return torch::CPU(at::kLong).tensor();
+    return at::empty()
+    // return torch::CPU(at::kLong).tensor();
 
   auto x1_t = dets.select(1, 0).contiguous();
   auto y1_t = dets.select(1, 1).contiguous();
@@ -66,11 +67,11 @@ at::Tensor nms_cpu(const at::Tensor& dets,
                const at::Tensor& scores,
                const float threshold) {
 
-  auto result = dets.type().tensor();
+  // auto result = dets.type().tensor();
+  auto result = at::empty().dtype(dets.type())
 
   AT_DISPATCH_FLOATING_TYPES(dets.type(), "nms", [&] {
     result = nms_cpu_kernel<scalar_t>(dets, scores, threshold);
   });
   return result;
 }
-

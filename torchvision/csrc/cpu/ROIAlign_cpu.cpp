@@ -231,7 +231,7 @@ at::Tensor ROIAlign_forward_cpu(const at::Tensor& input,
   auto height = input.size(2);
   auto width = input.size(3);
 
-  at::Tensor output = input.type().tensor({num_rois, channels, pooled_height, pooled_width});
+  at::Tensor output = at::empty({num_rois, channels, pooled_height, pooled_width}, input.options());
 
   auto output_size = num_rois * pooled_height * pooled_width * channels;
 

@@ -16,8 +16,11 @@ std::tuple<at::Tensor, at::Tensor> ROIPool_forward_cpu(const at::Tensor &input,
     int input_height = input.size(2);
     int input_width = input.size(3);
 
-    at::Tensor output = input.type().tensor({num_rois, channels, pooled_height, pooled_width});
-    at::Tensor argmax = input.type().toScalarType(at::kInt).tensor({num_rois, channels, pooled_height, pooled_width}).zero_();
+    // at::Tensor output = input.type().tensor({num_rois, channels, pooled_height, pooled_width});
+    at::Tensor output = at::empty({num_rois, channels, pooled_height, pooled_width}, input.options());
+    // at::Tensor argmax = input.type().toScalarType(at::kInt).tensor({num_rois, channels, pooled_height, pooled_width}).zero_();
+    at::Tensor argmax = at::zeros_like(output).dtype(input.type().toScalarType(at::kInt))
+
 
     // define accessors for indexing
     auto input_a = input.accessor<float, 4>();

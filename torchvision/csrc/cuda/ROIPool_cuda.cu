@@ -76,8 +76,8 @@ template <typename T>
 __global__ void RoIPoolBackward(const int nthreads, const T* grad_output,
     const int* argmax_data, const int num_rois, const T spatial_scale,
     const int channels, const int height, const int width,
-    const int pooled_height, const int pooled_width, 
-    T* grad_input, const T* rois, 
+    const int pooled_height, const int pooled_width,
+    T* grad_input, const T* rois,
     const int n_stride, const int c_stride,
     const int h_stride, const int w_stride) {
 
@@ -91,7 +91,7 @@ __global__ void RoIPoolBackward(const int nthreads, const T* grad_output,
         const T* offset_rois = rois + n * 5;
         int roi_batch_ind = offset_rois[0];
         T* grad_input_offset = grad_input + ((roi_batch_ind * channels + c) * height * width);
-        
+
         int output_offset = n*n_stride + c*c_stride;
         const int* argmax_data_offset = argmax_data + n*channels*pooled_height*pooled_width;
         int argmax = argmax_data_offset[c*pooled_height*pooled_width + ph*pooled_width + pw];
@@ -116,8 +116,9 @@ std::tuple<at::Tensor, at::Tensor> ROIPool_forward_cuda(const at::Tensor& input,
   auto height = input.size(2);
   auto width = input.size(3);
 
-  at::Tensor output = input.type().tensor({num_rois, channels, pooled_height, pooled_width});
-  at::Tensor argmax = input.type().toScalarType(at::kInt).tensor({num_rois, channels, pooled_height, pooled_width}).zero_();
+  at::Tensor output = at::empty({num_rois, channels, pooled_height, pooled_width}, input.options());
+  at::Tensor argmax = at::zeros_like(output).dtype(input.type().toScalarType(at::kInt))
+  // at::Tensor argmax = input.type().toScalarType(at::kInt).tensor({num_rois, channels, pooled_height, pooled_width}).zero_();
 
   auto output_size = num_rois * pooled_height * pooled_width * channels;
   cudaStream_t stream = at::cuda::getCurrentCUDAStream();
@@ -164,7 +165,7 @@ at::Tensor ROIPool_backward_cuda(const at::Tensor& grad,
   AT_ASSERTM(argmax.type().is_cuda(), "argmax must be a CUDA tensor");
 
   auto num_rois = rois.size(0);
-    
+
   at::Tensor grad_input = at::zeros({batch_size, channels, height, width}, grad.type());
 
   cudaStream_t stream = at::cuda::getCurrentCUDAStream();
@@ -177,12 +178,12 @@ at::Tensor ROIPool_backward_cuda(const at::Tensor& grad,
     THCudaCheck(cudaGetLastError());
     return grad_input;
   }
-  
+
   int n_stride = grad.stride(0);
   int c_stride = grad.stride(1);
   int h_stride = grad.stride(2);
   int w_stride = grad.stride(3);
-  
+
   AT_DISPATCH_FLOATING_TYPES_AND_HALF(grad.type(), "ROIPool_backward", [&] {
     RoIPoolBackward<scalar_t><<<grid, block, 0, stream>>>(
          grad.numel(),

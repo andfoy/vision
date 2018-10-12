@@ -117,7 +117,7 @@ std::tuple<at::Tensor, at::Tensor> ROIPool_forward_cuda(const at::Tensor& input,
   auto width = input.size(3);
 
   at::Tensor output = at::empty({num_rois, channels, pooled_height, pooled_width}, input.options());
-  at::Tensor argmax = at::zeros_like(output).dtype(input.type().toScalarType(at::kInt))
+  at::Tensor argmax = at::zeros_like(output).dtype(at::kInt)
   // at::Tensor argmax = input.type().toScalarType(at::kInt).tensor({num_rois, channels, pooled_height, pooled_width}).zero_();
 
   auto output_size = num_rois * pooled_height * pooled_width * channels;

@@ -68,7 +68,7 @@ at::Tensor nms_cpu(const at::Tensor& dets,
                const float threshold) {
 
   // auto result = dets.type().tensor();
-  auto result = at::empty().dtype(dets.type())
+  auto result = at::empty_like(dets);
 
   AT_DISPATCH_FLOATING_TYPES(dets.type(), "nms", [&] {
     result = nms_cpu_kernel<scalar_t>(dets, scores, threshold);

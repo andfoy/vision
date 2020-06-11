@@ -15,6 +15,7 @@
 #include "ROIPool.h"
 #include "empty_tensor_op.h"
 #include "nms.h"
+#include "cpu/image/read_png.h"
 
 // If we are in a Windows environment, we need to define
 // initialization functions for the _C extension
@@ -52,4 +53,5 @@ static auto registry =
         .op("torchvision::ps_roi_align", &ps_roi_align)
         .op("torchvision::ps_roi_pool", &ps_roi_pool)
         .op("torchvision::deform_conv2d", &deform_conv2d)
+        .op("torchvision::decode_png", &decodePNG)
         .op("torchvision::_cuda_version", &_cuda_version);

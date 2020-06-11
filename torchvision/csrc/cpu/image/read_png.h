@@ -1,5 +1,5 @@
 #pragma once
 
-#include <aten/torch.h>
+#include <torch/torch.h>
 
 torch::Tensor decodePNG(const torch::Tensor& data);

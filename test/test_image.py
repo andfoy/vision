@@ -36,6 +36,7 @@ class ImageTester(unittest.TestCase):
     def test_decode_jpeg(self):
         for img_path in get_images(IMAGE_ROOT, ".jpg"):
             img_pil = torch.from_numpy(np.array(Image.open(img_path)))
+            torch.save(img_pil, 'pil_sample.pth')
             size = os.path.getsize(img_path)
             img_ljpeg = decode_jpeg(torch.from_file(img_path, dtype=torch.uint8, size=size))
             self.assertTrue(img_ljpeg.equal(img_pil))

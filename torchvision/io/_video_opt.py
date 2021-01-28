@@ -43,14 +43,15 @@ try:
                 raise err
 
         kernel32.SetErrorMode(prev_error_mode)
-    
+
     if ext_specs is not None:
         print(ext_specs)
         torch.ops.load_library(ext_specs.origin)
         _HAS_VIDEO_OPT = True
-except (ImportError, OSError):
-    print("STUFF?")
-    pass
+except (ImportError, OSError) as e:
+    # print("STUFF?")
+    print(e)
+    # pass
 
 
 default_timebase = Fraction(0, 1)

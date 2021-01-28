@@ -3,7 +3,7 @@
 
 using namespace std;
 namespace ffmpeg {
-
+namespace Util {
 void SaveYComponent(
     unsigned char* buf,
     int wrap,
@@ -23,7 +23,7 @@ void SaveYComponent(
   for (i = 0; i < ysize; i++)
     fwrite(buf + i * wrap, 1, xsize, f);
   fclose(f);
-}
+}}
 
 namespace Serializer {
 

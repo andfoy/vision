@@ -11,7 +11,7 @@ namespace ffmpeg {
 
 class VideoStream : public Stream {
  public:
-  void SaveAFrame(AVFrame* avFrame);
+  // void SaveAFrame(AVFrame* avFrame);
 
   VideoStream(
       AVFormatContext* inputCtx,

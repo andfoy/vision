@@ -196,6 +196,10 @@ int VideoSampler::sample(
   out->ensure(outImageSize);
   LOG(ERROR) << "Sample main BODY ";
 
+  // if(cropContext_) {
+  LOG(ERROR) << "CropContext_: " << cropContext_;
+  // }
+
   uint8_t* scalePlanes[4] = {nullptr};
   int scaleLines[4] = {0};
   // perform scale first
